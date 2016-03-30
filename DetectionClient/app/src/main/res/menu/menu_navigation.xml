@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/login"
+        android:title="Logga in" />
+
+    <item
+        android:id="@+id/changeStatus"
+        android:title="Ändra status" />
+
+    <item
+        android:id="@+id/send"
+        android:title="Skicka" />
+
+    <item
+        android:id="@+id/recive"
+        android:title="Hämta" />
+
+    <item
+        android:id="@+id/data"
+        android:title="Data" />
+
+
+</menu>

@@ -21,4 +21,11 @@ public class QuickstartPreferences {
     public static final String SENT_TOKEN_TO_SERVER = "sentTokenToServer";
     public static final String REGISTRATION_COMPLETE = "registrationComplete";
 
+    // Server.
+    public static final String HOST = "http://ex.bjarntoft.se/";
+
+    // Användare.
+    public static final String USER_ID = "userId";
+    public static final String USER_PASSWORD = "userPassword";
+    public static final String USER_LOGGED_IN = "userLoggedIn";
 }

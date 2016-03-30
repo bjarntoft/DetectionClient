@@ -1,5 +1,6 @@
 package se.bjarntoft.detectionclient;
 
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,24 +24,28 @@ public class MainActivity extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-    private ProgressBar mRegistrationProgressBar;
     private TextView mInformationTextView;
     private boolean isReceiverRegistered;
+
+    // Fragments.
+    private LoginFragment loginFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRegistrationProgressBar = (ProgressBar) findViewById(R.id.registrationProgressBar);
+        // Initierar fragments.
+        loginFragment = new LoginFragment();
+
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                mRegistrationProgressBar.setVisibility(ProgressBar.GONE);
-                SharedPreferences sharedPreferences =
-                        PreferenceManager.getDefaultSharedPreferences(context);
-                boolean sentToken = sharedPreferences
-                        .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+
+                //sharedPreferences.edit().putString(QuickstartPreferences.USER_ID, "Kalle").commit();
+
                 if (sentToken) {
                     mInformationTextView.setText(getString(R.string.gcm_send_message));
                 } else {
@@ -46,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+
         mInformationTextView = (TextView) findViewById(R.id.informationTextView);
 
         // Registering BroadcastReceiver
@@ -79,10 +87,48 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_navigation, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Kontrollerar användarens menyval.
+        switch (item.getItemId()) {
+            case R.id.login:
+                transaction.replace(R.id.frameLayout, loginFragment);
+                transaction.commit();
+
+                return true;
+            case R.id.changeStatus:
+
+                return true;
+            case R.id.send:
+
+                return true;
+            case R.id.recive:
+                return true;
+            case R.id.data:
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+
+
+
+
     private void registerReceiver(){
         if(!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                    new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
+            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
             isReceiverRegistered = true;
         }
     }
