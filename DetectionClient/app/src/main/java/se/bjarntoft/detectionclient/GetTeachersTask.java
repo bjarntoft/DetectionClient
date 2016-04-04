@@ -19,20 +19,21 @@ import java.net.URL;
 /**
  * Created by Andreas Bjärntoft on 2016-03-29.
  */
-public class LoginTask extends AsyncTask<Object, Void, Boolean> {
+public class GetTeachersTask extends AsyncTask<Object, Void, Boolean> {
     private MainActivity parentActivity;
-    private StartFragment parentFragment;
+    private TeacherListFragment parentFragment;
+    private String[] items;
 
 
     @Override
     protected Boolean doInBackground(Object... params) {
         // Extraherar indata.
         parentActivity = (MainActivity)params[0];
-        parentFragment = (StartFragment)params[1];
+        parentFragment = (TeacherListFragment)params[1];
         String request = (String)params[2];
 
         try {
-            URL url = new URL(AppPreferences.HOST + "login.php");
+            URL url = new URL(AppPreferences.HOST + "getTeachers.php");
 
             // Upprättar anslutning.
             HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
@@ -59,19 +60,15 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
                 try {
                     // Extraherar mottaget json-objekt.
                     JSONObject jsonObject = new JSONObject(response.toString());
-                    JSONArray jsonArray = jsonObject.getJSONArray("login");
+                    JSONArray jsonArray = jsonObject.getJSONArray("teachers");
 
                     // Kontrollerar innehållet i mottaget json-objekt.
                     if(jsonArray.length() > 0) {
-                        // Extraherar variabler från json-objekt.
-                        String id = jsonArray.getJSONObject(0).getString("id");
-                        String password = jsonArray.getJSONObject(0).getString("password");
+                        items = new String[jsonArray.length()];
 
-                        // Lagrar användingsuppgifter lokalt.
-                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parentActivity.getApplication());
-                        sharedPreferences.edit().putString(AppPreferences.USER_ID, id).apply();
-                        sharedPreferences.edit().putString(AppPreferences.USER_PASSWORD, password).apply();
-                        sharedPreferences.edit().putBoolean(AppPreferences.USER_LOGGED_IN, true).apply();
+                        for(int i=0; i < jsonArray.length(); i++) {
+                            items[i] = jsonArray.getJSONObject(i).getString("name");
+                        }
 
                         return true;
                     }
@@ -92,9 +89,9 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
     protected void onPostExecute(Boolean aBoolean) {
         // Uppdaterar gui.
         if(aBoolean) {
-            parentFragment.setLoginStatus("Inloggning lyckades.");
+            parentFragment.setValues(items);
         } else {
-            parentFragment.setLoginStatus("Inloggning misslyckades, kontrollera användarnamn och lösenord.");
+            System.out.println("Lyckades inte");
         }
     }
 }

@@ -27,7 +27,17 @@ import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 
 public class RegistrationIntentService extends IntentService {
     private static final String TAG = "RegIntentService";
@@ -54,8 +64,15 @@ public class RegistrationIntentService extends IntentService {
             // [END get_token]
             Log.i(TAG, "GCM Registration Token: " + token);
 
+            sharedPreferences.edit().putBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, false).apply();
+            System.out.println("Värde: " + sharedPreferences.getBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, false));
+
             // TODO: Implement this method to send any registration to your app's servers.
-            sendRegistrationToServer(token);
+            if(!sharedPreferences.getBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, false)) {
+                System.out.println("sendRegistrationToServer");
+                sendRegistrationToServer(token);
+            }
+
 
             // Subscribe to topic channels
             subscribeTopics(token);
@@ -63,16 +80,16 @@ public class RegistrationIntentService extends IntentService {
             // You should store a boolean that indicates whether the generated token has been
             // sent to your server. If the boolean is false, send the token to your server,
             // otherwise your server should have already received the token.
-            sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
+            //sharedPreferences.edit().putBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, true).apply();
             // [END register_for_gcm]
         } catch (Exception e) {
             Log.d(TAG, "Failed to complete token refresh", e);
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
-            sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
+            sharedPreferences.edit().putBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, false).apply();
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
-        Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
+        Intent registrationComplete = new Intent(AppPreferences.REGISTRATION_COMPLETE);
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
     }
 
@@ -85,7 +102,59 @@ public class RegistrationIntentService extends IntentService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        // Add custom implementation, as needed.
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Kontrollerar om användaren är inloggad.
+        if(sharedPreferences.getBoolean(AppPreferences.USER_LOGGED_IN, false)) {
+            String id = sharedPreferences.getString(AppPreferences.USER_ID, "");
+            String password = sharedPreferences.getString(AppPreferences.USER_PASSWORD, "");
+
+            try {
+                URL url = new URL(AppPreferences.HOST + "token.php");
+                String request = "id=" + id + "&password=" + password + "&token=" + token;
+
+                // Upprättar anslutning.
+                HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoOutput(true);
+
+                // Sänder http-request.
+                OutputStream outputStream = urlConnection.getOutputStream();
+                outputStream.write((request).getBytes());
+                outputStream.flush();
+                outputStream.close();
+
+                // Tar emot respons.
+                if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+
+                    // Läser in mottagen data.
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        response.append(line);
+                    }
+
+                    try {
+                        // Extraherar mottaget json-objekt.
+                        JSONObject jsonObject = new JSONObject(response.toString());
+
+                        // Kontrollerar innehållet i mottaget json-objekt.
+                        if(jsonObject.getString("change").equals("true")) {
+                            sharedPreferences.edit().putBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, true).apply();
+                        }
+                    } catch (JSONException e) {
+                        System.out.println("JSONException: " + e);
+                    }
+                }
+            } catch(MalformedURLException e) {
+                System.out.println("MalformedURLException: " + e);
+            } catch(IOException e) {
+                System.out.println("IOException: " + e);
+            }
+        } else {
+            sharedPreferences.edit().putBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, false).apply();
+        }
     }
 
     /**

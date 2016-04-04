@@ -2,24 +2,15 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/login"
-        android:title="Logga in" />
+        android:id="@+id/start"
+        android:title="Start" />
 
     <item
-        android:id="@+id/changeStatus"
-        android:title="Ändra status" />
+        android:id="@+id/teacherList"
+        android:title="Lista kollegor" />
 
     <item
-        android:id="@+id/send"
-        android:title="Skicka" />
-
-    <item
-        android:id="@+id/recive"
-        android:title="Hämta" />
-
-    <item
-        android:id="@+id/data"
-        android:title="Data" />
-
+        android:id="@+id/logout"
+        android:title="Logga ut" />
 
 </menu>

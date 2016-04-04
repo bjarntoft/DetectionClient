@@ -1,6 +1,6 @@
 package se.bjarntoft.detectionclient;
 
-import android.app.FragmentTransaction;
+import android.app.*;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean isReceiverRegistered;
 
     // Fragments.
-    private LoginFragment loginFragment;
+    private StartFragment startFragment;
+    private TeacherListFragment teacherListFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,25 +38,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Initierar fragments.
-        loginFragment = new LoginFragment();
+        startFragment = new StartFragment();
+        teacherListFragment = new TeacherListFragment();
+
+        // Laddar start-fragment.
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.frameLayout, startFragment);
+        transaction.commit();
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-                boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+                boolean sentToken = sharedPreferences.getBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, false);
 
-                //sharedPreferences.edit().putString(QuickstartPreferences.USER_ID, "Kalle").commit();
 
+                /*
                 if (sentToken) {
                     mInformationTextView.setText(getString(R.string.gcm_send_message));
                 } else {
                     mInformationTextView.setText(getString(R.string.token_error_message));
                 }
+                */
             }
         };
 
-        mInformationTextView = (TextView) findViewById(R.id.informationTextView);
+        //mInformationTextView = (TextView) findViewById(R.id.informationTextView);
 
         // Registering BroadcastReceiver
         registerReceiver();
@@ -99,20 +108,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Kontrollerar användarens menyval.
         switch (item.getItemId()) {
-            case R.id.login:
-                transaction.replace(R.id.frameLayout, loginFragment);
+            case R.id.start:
+                transaction.replace(R.id.frameLayout, startFragment);
                 transaction.commit();
+                return true;
+            case R.id.teacherList:
+                transaction.replace(R.id.frameLayout, teacherListFragment);
+                transaction.commit();
+                return true;
+            case R.id.logout:
 
-                return true;
-            case R.id.changeStatus:
-
-                return true;
-            case R.id.send:
-
-                return true;
-            case R.id.recive:
-                return true;
-            case R.id.data:
 
                 return true;
             default:
@@ -128,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void registerReceiver(){
         if(!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
+            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(AppPreferences.REGISTRATION_COMPLETE));
             isReceiverRegistered = true;
         }
     }
@@ -138,8 +143,7 @@ public class MainActivity extends AppCompatActivity {
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
-                        .show();
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 Log.i(TAG, "This device is not supported.");
                 finish();
