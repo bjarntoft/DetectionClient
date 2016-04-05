@@ -8,7 +8,9 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -17,7 +19,10 @@ import android.widget.ArrayAdapter;
 public class TeacherListFragment extends ListFragment {
     private ViewGroup rootView;
     private MainActivity parentActivity;
-    String[] values;
+
+    // Lista.
+    private CustomAdapter customAdapter;
+    private List<ListItem> listItem = new ArrayList<ListItem>();
 
 
     @Override
@@ -27,6 +32,7 @@ public class TeacherListFragment extends ListFragment {
         parentActivity = (MainActivity)getActivity();
     }
 
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -35,22 +41,18 @@ public class TeacherListFragment extends ListFragment {
         String id = sharedPreferences.getString(AppPreferences.USER_ID, "");
         String password = sharedPreferences.getString(AppPreferences.USER_PASSWORD, "");
 
-        // Extraherar formulärsdata till en sträng för http-request.
+        // Extraherar användaruppgifter till en sträng för http-request.
         String request = "id=" + id + "&password=" + password;
 
-        // Loggar in användaren.
+        // Begär lista över lärare.
         GetTeachersTask getTeachersTask = new GetTeachersTask();
         getTeachersTask.execute(parentActivity, this, request);
 
-        //String[] values = {"aaa", "bbb", "ccc", "ddd"};
-
-        while(values==null) {
-            System.out.println("Väntar...");
-        }
-
-        ArrayAdapter adapter = new ArrayAdapter(parentActivity, android.R.layout.simple_list_item_1, values);
-        setListAdapter(adapter);
+        // Skapar skal till lista.
+        customAdapter = new CustomAdapter(parentActivity, listItem);
+        setListAdapter(customAdapter);
     }
+
 
     @Nullable
     @Override
@@ -60,8 +62,14 @@ public class TeacherListFragment extends ListFragment {
         return rootView;
     }
 
-    public void setValues(String[] values) {
-        this.values = values;
+
+    public void addListItem(String name, String status) {
+        ListItem item = new ListItem(name, status);
+        listItem.add(item);
     }
 
+
+    public void updateList() {
+        customAdapter.notifyDataSetChanged();
+    }
 }

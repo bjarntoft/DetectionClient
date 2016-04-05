@@ -1,8 +1,6 @@
 package se.bjarntoft.detectionclient;
 
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,13 +14,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+
 /**
  * Created by Andreas Bjärntoft on 2016-03-29.
  */
 public class GetTeachersTask extends AsyncTask<Object, Void, Boolean> {
     private MainActivity parentActivity;
     private TeacherListFragment parentFragment;
-    private String[] items;
 
 
     @Override
@@ -64,10 +62,14 @@ public class GetTeachersTask extends AsyncTask<Object, Void, Boolean> {
 
                     // Kontrollerar innehållet i mottaget json-objekt.
                     if(jsonArray.length() > 0) {
-                        items = new String[jsonArray.length()];
-
+                        // Loopar genom json-objekt.
                         for(int i=0; i < jsonArray.length(); i++) {
-                            items[i] = jsonArray.getJSONObject(i).getString("name");
+                            // Extraherar data.
+                            String name = jsonArray.getJSONObject(i).getString("name");
+                            String status = jsonArray.getJSONObject(i).getString("status");
+
+                            // Adderar rad i lista.
+                            parentFragment.addListItem(name, status);
                         }
 
                         return true;
@@ -89,7 +91,7 @@ public class GetTeachersTask extends AsyncTask<Object, Void, Boolean> {
     protected void onPostExecute(Boolean aBoolean) {
         // Uppdaterar gui.
         if(aBoolean) {
-            parentFragment.setValues(items);
+            parentFragment.updateList();
         } else {
             System.out.println("Lyckades inte");
         }

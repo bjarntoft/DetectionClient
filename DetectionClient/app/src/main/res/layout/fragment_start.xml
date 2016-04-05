@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -80,7 +79,6 @@
         </LinearLayout>
     </LinearLayout>
 
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -99,7 +97,6 @@
             android:layout_gravity="center_horizontal"
             android:id="@+id/start_statusSpinner" />
     </LinearLayout>
-
 
     <LinearLayout
         android:orientation="vertical"
@@ -171,7 +168,5 @@
                 android:text="Logga ut" />
         </LinearLayout>
     </LinearLayout>
-
-
 
 </FrameLayout>
