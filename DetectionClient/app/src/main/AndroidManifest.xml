@@ -12,6 +12,7 @@
     <uses-permission android:name="se.bjarntoft.detectionclient.permission.C2D_MESSAGE" />
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,6 +60,8 @@
             android:name="se.bjarntoft.detectionclient.RegistrationIntentService"
             android:exported="false">
         </service>
+
+        <service android:name=".BluetoothService"/>
     </application>
 
 </manifest>
