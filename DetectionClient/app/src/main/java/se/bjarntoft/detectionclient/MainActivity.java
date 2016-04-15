@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mInformationTextView;
     private boolean isReceiverRegistered;
 
+    private BroadcastReceiver receiver;
+
     // Fragments.
     private StartFragment startFragment;
     private TeacherListFragment teacherListFragment;
@@ -104,11 +106,29 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                System.out.println("Ny receiver, onReceive påkallad");
+                //String s = intent.getStringExtra(BluetoothService.COPA_MESSAGE);
+                //System.out.println(s);
 
+                // Uppdaterar gui.
+                startFragment.setDetectionStatus();
+            }
+        };
 
         
 
     }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(BluetoothDetectionTask.COPA_RESULT));
+    }
+
 
     @Override
     protected void onResume() {
@@ -120,7 +140,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+
+        startFragment.setDetectionStatus();
+
     }
+
 
     @Override
     protected void onPause() {
@@ -129,12 +153,26 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+
+
+    @Override
+    protected void onStop() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        super.onStop();
+    }
+
+
     @Override
     protected void onDestroy() {
         stopService(new Intent(this, BluetoothService.class));
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.edit().putString(AppPreferences.USER_ZONE, "Ej detekterad");
+
+
         super.onDestroy();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

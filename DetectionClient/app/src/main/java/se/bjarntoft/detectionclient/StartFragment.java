@@ -26,6 +26,7 @@ public class StartFragment extends Fragment implements View.OnClickListener, Ada
     // Gui-komponenter.
     private TextView tvLoginStatus;
     private TextView tvSystemStatus;
+    private TextView tvDetectionStatus;
     private Spinner spAccessStatus;
     private EditText etUserId;
     private EditText etUserPassword;
@@ -49,6 +50,7 @@ public class StartFragment extends Fragment implements View.OnClickListener, Ada
         // Identifierar gui-komponenter.
         tvLoginStatus = (TextView)rootView.findViewById(R.id.start_loginStatus);
         tvSystemStatus = (TextView)rootView.findViewById(R.id.start_systemStatus);
+        tvDetectionStatus = (TextView)rootView.findViewById(R.id.start_detectionStatus);
         spAccessStatus = (Spinner)rootView.findViewById(R.id.start_statusSpinner);
         etUserId = (EditText)rootView.findViewById(R.id.start_userId);
         etUserPassword = (EditText)rootView.findViewById(R.id.start_userPassword);
@@ -119,5 +121,13 @@ public class StartFragment extends Fragment implements View.OnClickListener, Ada
 
     public void setLoginStatus(String status) {
         tvLoginStatus.setText(status);
+    }
+
+    public void setDetectionStatus() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parentActivity.getApplication());
+        String zone = sharedPreferences.getString(AppPreferences.USER_ZONE, "");
+
+
+        tvDetectionStatus.setText(zone);
     }
 }

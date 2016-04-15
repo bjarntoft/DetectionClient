@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 
 
 /**
@@ -20,9 +21,13 @@ public class BluetoothService extends Service  {
     public static final long BT_DISCOVERY_INTERVAL = 10 * 1000;     // millisekunder
     public static final long BT_DETECTION_INTERVAL = 20 * 1000;     // millisekunder
 
+    //static final public String COPA_RESULT = "se.bjarntoft.detectionclient.BluetoothService.REQUEST_PROCESSED";
+    //static final public String COPA_MESSAGE = "se.bjarntoft.detectionclient.BluetoothService.COPA_MSG";
+
     // Arbetsobjekt.
     private BluetoothAdapter btAdapter;
     private Handler btDetectionHandler;
+    //private LocalBroadcastManager localBroadcastManager;
 
     // Arbetsvariabler.
     private Boolean btDetected = false;
@@ -39,6 +44,8 @@ public class BluetoothService extends Service  {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        //localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         // Definierar filter för bluetooth-receiver.
         IntentFilter filter = new IntentFilter();
@@ -77,6 +84,20 @@ public class BluetoothService extends Service  {
     }
 
 
+    /*
+    public void updateZone() {
+        Intent intent = new Intent(COPA_RESULT);
+
+        //if(message != null) {
+        //    intent.putExtra(COPA_MESSAGE, message);
+        //}
+
+
+        localBroadcastManager.sendBroadcast(intent);
+    }
+    */
+
+
     // Bluetooth-receiver.
     private final BroadcastReceiver btReciver = new BroadcastReceiver() {
         @Override
@@ -102,6 +123,7 @@ public class BluetoothService extends Service  {
 
                 // Kontrollerar om bluetooth-enheten tillhör systemet.
                 if(name != null && name.equals("RN-42")) {
+                    System.out.println("Enhet hittad!");
                     btDetectedMacAdress = device.getAddress();
                     btDetected = true;
                 }
@@ -114,12 +136,15 @@ public class BluetoothService extends Service  {
     private final Runnable btDetectionThread = new Runnable() {
         @Override
         public void run() {
+            System.out.println("Tråd för uppdatering av databas");
             // Kontrollerar om en bluetooth-enhet som tillhör systemet har detekterats.
             if(btDetected) {
                 // Kontrollerar så att registreringen i databasen inte redan är gjord.
                 if(!btDetectedMacAdress.equals(lastRegisteredMacAdress)) {
                     sendDetection(btDetectedMacAdress);
                     lastRegisteredMacAdress = btDetectedMacAdress;
+
+                    //updateZone();
                 }
 
                 btDetected = false;
@@ -128,6 +153,8 @@ public class BluetoothService extends Service  {
                 if(!lastRegisteredMacAdress.equals("NULL")) {
                     sendDetection("NULL");
                     lastRegisteredMacAdress = "NULL";
+
+                    //updateZone();
                 }
             }
 

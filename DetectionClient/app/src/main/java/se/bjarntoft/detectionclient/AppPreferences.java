@@ -16,4 +16,5 @@ public class AppPreferences {
     public static final String USER_ID = "userId";
     public static final String USER_PASSWORD = "userPassword";
     public static final String USER_LOGGED_IN = "userLoggedIn";
+    public static final String USER_ZONE = "userZone";
 }

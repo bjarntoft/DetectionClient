@@ -1,10 +1,13 @@
 package se.bjarntoft.detectionclient;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,11 +23,17 @@ import java.net.URL;
  * Created by Andreas Bjärntoft on 2016-04-12.
  */
 public class BluetoothDetectionTask extends AsyncTask<Object, Void, Void> {
+    static final public String COPA_RESULT = "se.bjarntoft.detectionclient.BluetoothService.REQUEST_PROCESSED";
+    private LocalBroadcastManager localBroadcastManager;
+
+
     @Override
     protected Void doInBackground(Object... params) {
         // Extraherar indata.
         Context context = (Context)params[0];
         String macAdress = (String)params[1];
+
+        localBroadcastManager = LocalBroadcastManager.getInstance(context);
 
         // Hämtar användaruppgifter.
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -62,6 +71,21 @@ public class BluetoothDetectionTask extends AsyncTask<Object, Void, Void> {
                 try {
                     // Extraherar mottaget json-objekt.
                     JSONObject jsonObject = new JSONObject(response.toString());
+                    JSONArray jsonArray = jsonObject.getJSONArray("bluetooth");
+
+                    // Kontrollerar innehållet i mottaget json-objekt.
+                    if(jsonArray.length() > 0) {
+                        // Extraherar variabler från json-objekt.
+                        String zone = jsonArray.getJSONObject(0).getString("zone");
+
+                        // Lagrar användingsuppgifter lokalt.
+                        sharedPreferences.edit().putString(AppPreferences.USER_ZONE, zone).apply();
+
+                        Intent intent = new Intent(COPA_RESULT);
+                        localBroadcastManager.sendBroadcast(intent);
+
+
+                    }
                 } catch (JSONException e) {
                     System.out.println("ERROR: " + e);
                 }
