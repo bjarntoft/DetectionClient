@@ -62,14 +62,19 @@ public class GetTeachersTask extends AsyncTask<Object, Void, Boolean> {
 
                     // Kontrollerar innehållet i mottaget json-objekt.
                     if(jsonArray.length() > 0) {
+                        // Nollställer lista.
+                        parentFragment.clearList();
+
                         // Loopar genom json-objekt.
                         for(int i=0; i < jsonArray.length(); i++) {
                             // Extraherar data.
+                            String id = jsonArray.getJSONObject(i).getString("id");
                             String name = jsonArray.getJSONObject(i).getString("name");
                             String status = jsonArray.getJSONObject(i).getString("status");
+                            String connected = jsonArray.getJSONObject(i).getString("connected");
 
                             // Adderar rad i lista.
-                            parentFragment.addListItem(name, status);
+                            parentFragment.addListItem(id, name, status, connected);
                         }
 
                         return true;

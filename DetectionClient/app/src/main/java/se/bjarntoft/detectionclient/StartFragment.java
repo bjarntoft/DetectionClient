@@ -59,6 +59,7 @@ public class StartFragment extends Fragment implements View.OnClickListener, Ada
 
         // Ansluter lyssnare.
         btLogin.setOnClickListener(this);
+        btLogout.setOnClickListener(this);
         spAccessStatus.setOnItemSelectedListener(this);
 
         return rootView;
@@ -72,18 +73,26 @@ public class StartFragment extends Fragment implements View.OnClickListener, Ada
         // Hämtar sparade variabler.
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parentActivity.getApplication());
         boolean login = sharedPreferences.getBoolean(AppPreferences.USER_LOGGED_IN, false);
+        String user = sharedPreferences.getString(AppPreferences.USER_ID, "");
+        String password = sharedPreferences.getString(AppPreferences.USER_PASSWORD, "");
         boolean visitSystem = sharedPreferences.getBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, false);
 
         // Anslutet spinner.
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(parentActivity, R.array.status_array, android.R.layout.simple_spinner_dropdown_item);
         spAccessStatus.setAdapter(arrayAdapter);
 
-        // Uppdaterar gui.
+        // Uppdaterar gui
         if(login) {
-            tvLoginStatus.setText(sharedPreferences.getString(AppPreferences.USER_ID, "-"));
+            tvLoginStatus.setText("Ja");
         } else {
-            tvLoginStatus.setText("Ej inloggad");
+            tvLoginStatus.setText("Nej");
         }
+
+        // Uppdaterar gui.
+        etUserId.setText(user);
+        etUserPassword.setText(password);
+        btLogin.setEnabled(!login);
+        btLogout.setEnabled(login);
 
         // Uppdaterar gui.
         if(visitSystem) {
@@ -104,6 +113,18 @@ public class StartFragment extends Fragment implements View.OnClickListener, Ada
             LoginTask loginTask = new LoginTask();
             loginTask.execute(parentActivity, this, request);
         }
+
+        if(v == btLogout) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parentActivity.getApplication());
+            sharedPreferences.edit().putString(AppPreferences.USER_ID, "").apply();
+            sharedPreferences.edit().putString(AppPreferences.USER_PASSWORD, "").apply();
+            sharedPreferences.edit().putBoolean(AppPreferences.USER_LOGGED_IN, false).apply();
+
+            btLogin.setEnabled(true);
+            btLogout.setEnabled(false);
+        }
+
+
     }
 
 
@@ -127,7 +148,7 @@ public class StartFragment extends Fragment implements View.OnClickListener, Ada
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parentActivity.getApplication());
         String zone = sharedPreferences.getString(AppPreferences.USER_ZONE, "");
 
-
+        // Uppdaterar gui.
         tvDetectionStatus.setText(zone);
     }
 }

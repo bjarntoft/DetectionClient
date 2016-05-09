@@ -92,9 +92,9 @@ public class LoginTask extends AsyncTask<Object, Void, Boolean> {
     protected void onPostExecute(Boolean aBoolean) {
         // Uppdaterar gui.
         if(aBoolean) {
-            parentFragment.setLoginStatus("Inloggning lyckades.");
+            parentFragment.setLoginStatus("Ja");
         } else {
-            parentFragment.setLoginStatus("Inloggning misslyckades, kontrollera användarnamn och lösenord.");
+            parentFragment.setLoginStatus("Nej");
         }
     }
 }

@@ -12,7 +12,6 @@
     <string-array name="status_array">
         <item>Tillgänglig</item>
         <item>Upptagen</item>
-        <item>Offline</item>
     </string-array>
 
 </resources>

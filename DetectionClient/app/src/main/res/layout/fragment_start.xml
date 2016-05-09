@@ -34,8 +34,7 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:paddingRight="4dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Inloggad som:" />
+                android:text="Inloggad:" />
 
             <TextView
                 android:layout_width="0dp"
@@ -43,9 +42,8 @@
                 android:layout_weight="1"
                 android:gravity="left"
                 android:paddingLeft="4dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="italic"
-                android:text="ej inloggad"
+
                 android:id="@+id/start_loginStatus" />
         </LinearLayout>
 
@@ -63,7 +61,6 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:paddingRight="4dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Besökssystem:" />
 
             <TextView
@@ -72,10 +69,36 @@
                 android:layout_weight="1"
                 android:gravity="left"
                 android:paddingLeft="4dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="italic"
-                android:text="ej ansluten"
+
                 android:id="@+id/start_systemStatus" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:paddingRight="4dp"
+                android:text="Detekterad zon:" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:paddingLeft="4dp"
+                android:textStyle="italic"
+
+                android:id="@+id/start_detectionStatus" />
         </LinearLayout>
     </LinearLayout>
 
@@ -89,20 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Detekterad zon:" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/start_detectionStatus"
-            android:text="ej detekterad" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:text="Status:" />
-
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

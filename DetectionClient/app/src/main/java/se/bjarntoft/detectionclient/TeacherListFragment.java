@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,13 +64,32 @@ public class TeacherListFragment extends ListFragment {
     }
 
 
-    public void addListItem(String name, String status) {
-        ListItem item = new ListItem(name, status);
+    public void addListItem(String id, String name, String status, String connected) {
+        ListItem item = new ListItem(id, name, status, connected);
         listItem.add(item);
     }
 
 
     public void updateList() {
         customAdapter.notifyDataSetChanged();
+    }
+
+    public void clearList() {
+        listItem.clear();
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        // Extraherar formulärsdata till en sträng för http-request.
+        String request = "id=" + listItem.get(position).getId();
+
+        // Loggar in användaren.
+        NotificationTask notificationTask = new NotificationTask();
+        notificationTask.execute(parentActivity, this, request);
+
+        System.out.println("Önskar besök: " + request);
+
     }
 }

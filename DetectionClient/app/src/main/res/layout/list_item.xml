@@ -9,6 +9,9 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/list_row"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:weightSum="100">
 
         <TextView
@@ -17,7 +20,7 @@
             android:text="New Text"
             android:id="@+id/list_title"
             android:gravity="left"
-            android:layout_weight="70" />
+            android:layout_weight="60" />
 
         <TextView
             android:layout_width="0dp"
@@ -25,6 +28,19 @@
             android:text="New Text"
             android:id="@+id/list_status"
             android:gravity="right"
-            android:layout_weight="30"/>
+            android:layout_weight="20"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="BESÖK >>"
+            android:textStyle="bold"
+            android:textColor="#008800"
+            android:id="@+id/list_visit"
+            android:gravity="right"
+            android:layout_weight="20"/>
+
     </LinearLayout>
+
+
 </RelativeLayout>

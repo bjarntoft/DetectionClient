@@ -138,12 +138,11 @@ public class RegistrationIntentService extends IntentService {
                         // Extraherar mottaget json-objekt.
                         JSONObject jsonObject = new JSONObject(response.toString());
 
-                        /*
                         // Kontrollerar innehållet i mottaget json-objekt.
-                        if(jsonObject.getString("change").equals("true")) {
+                        if(jsonObject.getString("token").equals("true")) {
                             sharedPreferences.edit().putBoolean(AppPreferences.SENT_TOKEN_TO_SERVER, true).apply();
                         }
-                        */
+
                     } catch (JSONException e) {
                         System.out.println("JSONException: " + e);
                     }
